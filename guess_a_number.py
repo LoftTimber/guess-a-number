@@ -2,23 +2,28 @@ print("==========================")
 print("Welcome to Guess a Number!")
 print("==========================")
 
-high_pick=True
-number=10
-guess=0
+
+
+
+
 import math
 import random
 
-while high_pick:
-    number=input("Insert a high: ")
-        
-    if int(number)==0 or int(number)==1 or int(number)==2:
-        print("Use a different number.")
-        
-    elif number.isnumeric():
-        high_pick=False
-        
-    else:
-        print ("You need to use a number.")
+
+def pick_highest():
+    while True:
+        print("---------------")
+        number=input("Insert a high: ")
+        print("---------------")
+            
+        if int(number)==0 or int(number)==1 or int(number)==2:
+            print("Use a different high.")
+            
+        elif number.isnumeric():
+            return number            
+                        
+        else:
+            print ("You need to use a number.")
 
 def tries_pm(number):
     tries=math.log(int(number)-1,2)+1
@@ -29,35 +34,53 @@ def show_ending():
     print("@@@Thank you for playing!@@@")
     print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
-def pick_number():
+def pick_number(number):
     print("I'm thinking of a number from 1 to "+str(number)+".");    
 
     return random.randint(1, int(number))
         
-def get_guess():
-    while True:
-        guess=input("Take a guess: ")
+def get_guess(c_low,number,tries):
     
+    while True:
+        
+        guess=input("Take a guess, "+str(c_low)+" to "+str(number)+": ")
+            
+        
         if guess.isnumeric():
-            guess = int(guess)
-            return guess
+            guess=int(guess)
+            
+            if int(c_low)-1<int(guess)<int(number)+1:
+                
+                return guess
+
+            else:
+                print("You need to use a number that is "+str(c_low)+" through "+str(number)+".")
+                print("You still have "+str(tries)+" left.")
+                
         else:
             print ("You need to use a number.")
 
             
-def check_guess(guess,rand):
+def check_guess(guess,rand,c_low,number):
     if guess < rand:
         print("You guessed too low.")
+        
+        return c_low
+        
+        
     elif guess > rand:
         print("You guessed too high.")
+        
+        return number
+        
     else:
         print("-----------")
         print("You got it!")
         print("-----------")
+
+
         
-def show_gameover():
-    
-    
+def show_gameover(): 
     print("---------------------")
     print("You ran out of tries!")
 
@@ -72,12 +95,17 @@ def c_tries(tries):
         return c_tries
 
 def play():
+    
+    number=pick_highest()
     guess=-1
+    c_low=1
     tries_pm(number)
     tries=tries_pm(number)
     limit=2
     
-    rand=pick_number()
+    rand=pick_number(number)
+
+    
 
     while guess != rand:
         if tries<limit:
@@ -89,9 +117,22 @@ def play():
             c_tries(tries)
             tries=c_tries(tries)
             print("You have "+(str(tries))+" tries left.")
-            guess=get_guess()
 
-            check_guess(guess,rand)
+            
+            
+            guess=get_guess(c_low,number,tries)
+            check_guess(guess,rand,c_low,number)
+            if guess<rand:
+                c_low=guess+1
+            elif guess>rand:
+                number=guess-1
+                
+                
+            
+            
+            
+            
+            
 
         
        
@@ -107,7 +148,7 @@ def play_again():
         elif decision == 'n' or decision == 'no':
             return False
         else:
-            print("I don't understand. Please enter 'y' or 'n'.")
+            print("Please enter 'y' or 'n'.")
 
             
 
